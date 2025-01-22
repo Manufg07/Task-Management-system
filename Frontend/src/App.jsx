@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import AddTask from "./pages/AddTask";
 import { AuthProvider } from "./context/AuthContext";
 import SignupPage from "./pages/SignupPage";
+import TaskForm from "./pages/TaskForm";
 
 
 const App = () => {
@@ -19,6 +20,7 @@ const App = () => {
           <Route path="/admin" element={<AdminDashboard />} />
           {/* <Route path="/admin/users" element={<UserManagement />} /> */}
           <Route path="/addTask" element={<AddTask />} />
+          <Route path="/add" element={<TaskForm />} />
         </Routes>
       </Router>
     </AuthProvider>

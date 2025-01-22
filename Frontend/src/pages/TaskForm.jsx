@@ -1,81 +1,100 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
 
-const TaskForm = ({ taskId, onSave }) => {
-    const [task, setTask] = useState({ title: '', description: '' });
+const AddTask = () => {
+  const [title, settitle] = useState("");
+  const [description, setTaskDescription] = useState("");
+  const [date, setDate] = useState("");
+  const [status, setTaskStatus] = useState("");
+  const [priority, setTaskPriority] = useState("");
 
-    useEffect(() => {
-        if (taskId) {
-            // Fetch the task details if taskId is provided (edit mode)
-            axios.get(`/api/tasks/${taskId}`)
-                .then(response => {
-                    setTask(response.data);
-                })
-                .catch(error => {
-                    console.error('There was an error fetching the task!', error);
-                });
-        }
-    }, [taskId]);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setTask(prevTask => ({
-            ...prevTask,
-            [name]: value
-        }));
+  const submitForm = (e) => {
+    e.preventDefault();
+    const TaskDetails = {
+      title: title,
+      description: description,
+      date: date,
+      status: status,
+      priority: priority,
     };
+    addTaskasync(TaskDetails);
+  };
+  const addTaskasync = async (TaskDetails) => {
+    const response = await fetch("/task", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(TaskDetails),
+    });
+    const data = await response.json();
+    alert("Task Added Successfully");
+    console.log(data);
+  };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (taskId) {
-            // Update the task if taskId is provided
-            axios.put(`/api/tasks/${taskId}`, task)
-                .then(response => {
-                    onSave(response.data);
-                })
-                .catch(error => {
-                    console.error('There was an error updating the task!', error);
-                });
-        } else {
-            // Create a new task
-            axios.post('/api/tasks', task)
-                .then(response => {
-                    onSave(response.data);
-                })
-                .catch(error => {
-                    console.error('There was an error creating the task!', error);
-                });
-        }
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-4 bg-white shadow-md rounded">
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Title</label>
-                <input
-                    type="text"
-                    name="title"
-                    value={task.title}
-                    onChange={handleChange}
-                    required
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Description</label>
-                <textarea
-                    name="description"
-                    value={task.description}
-                    onChange={handleChange}
-                    required
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-            </div>
-            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                {taskId ? 'Update' : 'Create'} Task
+  return (
+    <>
+      <div className="">
+        <h2 className="font-bold text-2xl ml-[45%]">Add Task</h2>
+        <div className="border-2 border-black w-[30%] p-4 m-auto flex justify-center">
+          <form onSubmit={submitForm} className="">
+            <label className="text-sm">Task Name </label>
+            <input
+              type="text"
+              onChange={(e) => settitle(e.target.value)}
+              name="title"
+              className="border-2 border-gray-900 px-4 py-1 relative left-[35%]  "
+            />{" "}
+            <br />
+            <br />
+            <label className="text-sm">Task Description</label>
+            <input
+              type="text"
+              name="description"
+              onChange={(e) => setTaskDescription(e.target.value)}
+              className="border-2 border-gray-900 px-4 py-1 relative left-[25%] "
+            />
+            <br />
+            <br />
+            <label className="text-sm">Status</label>
+            <select
+              className="border-2 border-gray-900 px-14 py-1 relative left-[45%] "
+              name="status"
+              onClick={(e) => setTaskStatus(e.target.value)}
+            >
+              <option value="pending">Pending</option>
+              <option value="in-progress">In-Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+            <br />
+            <br />
+            <label className="text-sm">Task Deadline</label>
+            <input
+              type="date"
+              name="taskdeadline"
+              onChange={(e) => setDate(e.target.value)}
+              className="border-2 border-gray-900 px-10 py-1 relative left-[30%]"
+            />
+            <br />
+            <br />
+            <label className="text-sm">Priority</label>
+            <select
+              className="border-2 border-gray-900 px-16 py-1 relative left-[43%] "
+              name="priority"
+              onClick={(e) => setTaskPriority(e.target.value)}
+            >
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="low">Low</option>
+            </select>
+            <br />
+            <button type="submit" className="px-4 bg-blue-600 py-2 ">
+              Add Task
             </button>
-        </form>
-    );
+          </form>
+        </div>
+      </div>
+    </>
+  );
 };
 
-export default TaskForm;
+export default AddTask;
